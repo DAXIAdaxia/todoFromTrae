@@ -59,7 +59,7 @@ export function TodoForm({ isOpen, onClose, editTodo }: TodoFormProps) {
     setSelectedTagIds([]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) return;
@@ -75,14 +75,18 @@ export function TodoForm({ isOpen, onClose, editTodo }: TodoFormProps) {
       completed: editTodo?.completed || false,
     };
 
-    if (editTodo) {
-      updateTodo(editTodo.id, todoData);
-    } else {
-      addTodo(todoData);
+    try {
+      if (editTodo) {
+        await updateTodo(editTodo.id, todoData);
+      } else {
+        await addTodo(todoData);
+      }
+      onClose();
+      resetForm();
+    } catch (err) {
+      console.error('保存任务失败:', err);
+      alert('保存失败，请重试');
     }
-
-    onClose();
-    resetForm();
   };
 
   const handleTagToggle = (tagId: string) => {

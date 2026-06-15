@@ -38,9 +38,14 @@ export function TodoItem({ todo, onEdit, isDragging }: TodoItemProps) {
   const todoTags = tags.filter((t) => todo.tagIds.includes(t.id));
   const overdue = isOverdue(todo.dueDate, todo.completed);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm('确定要删除这个任务吗？')) {
-      deleteTodo(todo.id);
+      try {
+        await deleteTodo(todo.id);
+      } catch (err) {
+        console.error('删除任务失败:', err);
+        alert('删除失败，请重试');
+      }
     }
   };
 
@@ -66,7 +71,7 @@ export function TodoItem({ todo, onEdit, isDragging }: TodoItemProps) {
 
       <Checkbox
         checked={todo.completed}
-        onCheckedChange={() => toggleComplete(todo.id)}
+        onCheckedChange={() => toggleComplete(todo.id).catch(console.error)}
         className="mt-0.5"
       />
 

@@ -27,18 +27,22 @@ export function CategoryManager({ isOpen, onClose }: CategoryManagerProps) {
   const [newColor, setNewColor] = useState(PRESET_COLORS[0]);
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!newName.trim()) return;
-    
-    if (activeTab === 'categories') {
-      addCategory(newName.trim(), newColor);
-    } else {
-      addTag(newName.trim(), newColor);
+
+    try {
+      if (activeTab === 'categories') {
+        await addCategory(newName.trim(), newColor);
+      } else {
+        await addTag(newName.trim(), newColor);
+      }
+      setNewName('');
+      setNewColor(PRESET_COLORS[0]);
+      setIsAdding(false);
+    } catch (err) {
+      console.error('添加失败:', err);
+      alert('添加失败，请重试');
     }
-    
-    setNewName('');
-    setNewColor(PRESET_COLORS[0]);
-    setIsAdding(false);
   };
 
   const handleEdit = (id: string, name: string, color: string) => {
@@ -47,26 +51,35 @@ export function CategoryManager({ isOpen, onClose }: CategoryManagerProps) {
     setNewColor(color);
   };
 
-  const handleSaveEdit = (id: string) => {
+  const handleSaveEdit = async (id: string) => {
     if (!newName.trim()) return;
-    
-    if (activeTab === 'categories') {
-      updateCategory(id, { name: newName.trim(), color: newColor });
-    } else {
-      updateTag(id, { name: newName.trim(), color: newColor });
+
+    try {
+      if (activeTab === 'categories') {
+        await updateCategory(id, { name: newName.trim(), color: newColor });
+      } else {
+        await updateTag(id, { name: newName.trim(), color: newColor });
+      }
+      setEditingId(null);
+      setNewName('');
+      setNewColor(PRESET_COLORS[0]);
+    } catch (err) {
+      console.error('保存失败:', err);
+      alert('保存失败，请重试');
     }
-    
-    setEditingId(null);
-    setNewName('');
-    setNewColor(PRESET_COLORS[0]);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('确定要删除吗？')) {
-      if (activeTab === 'categories') {
-        deleteCategory(id);
-      } else {
-        deleteTag(id);
+      try {
+        if (activeTab === 'categories') {
+          await deleteCategory(id);
+        } else {
+          await deleteTag(id);
+        }
+      } catch (err) {
+        console.error('删除失败:', err);
+        alert('删除失败，请重试');
       }
     }
   };

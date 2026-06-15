@@ -9,8 +9,10 @@ import {
   FolderOpen,
   Settings,
   Plus,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 import { useCategoryStore } from '@/store/categoryStore';
 import { useTagStore } from '@/store/tagStore';
 import { useTodoStore } from '@/store/todoStore';
@@ -30,6 +32,7 @@ const navItems = [
 ];
 
 export function Sidebar({ onAddTodo, onManageCategories }: SidebarProps) {
+  const { user, signOut } = useAuth();
   const { categories } = useCategoryStore();
   const { tags } = useTagStore();
   const { todos } = useTodoStore();
@@ -144,9 +147,34 @@ export function Sidebar({ onAddTodo, onManageCategories }: SidebarProps) {
       </nav>
 
       <div className="p-4 border-t border-white/10">
-        <div className="text-xs text-white/40 text-center">
-          数据本地存储
-        </div>
+        {user && (
+          <div className="flex items-center gap-3 mb-3">
+            {user.user_metadata?.avatar_url ? (
+              <img
+                src={user.user_metadata.avatar_url}
+                alt=""
+                className="w-8 h-8 rounded-full"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">
+                {(user.email?.[0] ?? 'U').toUpperCase()}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">
+                {user.user_metadata?.user_name ?? user.email}
+              </p>
+              <p className="text-xs text-white/40">Supabase 云端同步</p>
+            </div>
+          </div>
+        )}
+        <button
+          onClick={() => signOut()}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+        >
+          <LogOut size={16} />
+          退出登录
+        </button>
       </div>
     </aside>
   );
