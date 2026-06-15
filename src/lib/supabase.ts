@@ -11,8 +11,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient<Database>(
-  supabaseUrl ?? '',
-  supabaseAnonKey ?? ''
+  supabaseUrl!,
+  supabaseAnonKey!
 );
 
 export async function getCurrentUserId(): Promise<string> {
