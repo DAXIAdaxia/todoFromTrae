@@ -89,6 +89,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
       .single();
 
     if (error) throw error;
+    if (!data) throw new Error('创建任务失败');
 
     if (todoData.tagIds.length > 0) {
       await syncTodoTags(data.id, todoData.tagIds);
@@ -119,6 +120,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
       .single();
 
     if (error) throw error;
+    if (!data) throw new Error('更新任务失败');
 
     const tagIds = updates.tagIds ?? existing.tagIds;
     if (updates.tagIds !== undefined) {
@@ -153,6 +155,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
       .single();
 
     if (error) throw error;
+    if (!data) throw new Error('更新任务状态失败');
 
     set((state) => ({
       todos: state.todos.map((t) =>
